@@ -88,8 +88,6 @@ with col2:
 with col3:
     st.markdown("#### 📊 文献分析数据（可选）")
     analysis = st.file_uploader("文献数据分析表", type=["xlsx"], key="analysis")
-    efficacy = st.file_uploader("有效性结果表", type=["xlsx"], key="efficacy")
-    safety = st.file_uploader("安全性结果表", type=["xlsx"], key="safety")
 
 # =========================
 # 数据状态
