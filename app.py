@@ -58,7 +58,7 @@ st.markdown("""
 # 标题区
 # =========================
 st.markdown("<div class='main-title'>📄 PRER 自动报告生成系统</div>", unsafe_allow_html=True)
-st.markdown("<div class='sub-title'>基于多源文献数据自动生成结构化医疗报告</div>", unsafe_allow_html=True)
+st.markdown("<div class='sub-title'>基于文献数据自动生成结构化报告</div>", unsafe_allow_html=True)
 
 st.divider()
 
@@ -87,13 +87,16 @@ st.subheader("📂 数据上传区")
 col1, col2, col3 = st.columns(3)
 
 with col1:
+    st.markdown("#### 📌 报告模板（必填）")
+    template = st.file_uploader("Word模板", type=["docx"])
+with col2:
     st.markdown("#### 📌 核心数据（必填）")
     product_info = st.file_uploader("产品信息表", type=["xlsx"])
     screening = st.file_uploader("文献筛选表", type=["xlsx"])
     template = st.file_uploader("Word模板", type=["docx"])
 
-with col2:
-    st.markdown("#### 📊 分析数据（可选）")
+with col3:
+    st.markdown("#### 📊 文献分析数据（可选）")
     analysis = st.file_uploader("文献数据分析表", type=["xlsx"])
     efficacy = st.file_uploader("有效性结果表", type=["xlsx"])
     safety = st.file_uploader("安全性结果表", type=["xlsx"])
@@ -147,7 +150,7 @@ if st.button("🚀 开始生成PRER报告"):
         st.download_button(
             label="📥 下载PRER报告",
             data=output,
-            file_name=f"PRER报告_{datetime.now().strftime('%Y%m%d_%H%M')}.docx",
+            file_name=f"PRER报告_{datetime.now()}.docx",
             mime="application/vnd.openxmlformats-officedocument.wordprocessingml.document"
         )
 
