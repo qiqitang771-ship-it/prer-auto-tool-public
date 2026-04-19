@@ -77,7 +77,6 @@ with st.sidebar:
     """)
 
     st.divider()
-
     st.info("💡 必填：产品信息 + 文献筛选 + 模板")
 
 # =========================
@@ -114,17 +113,18 @@ c2.metric("文献筛选表", "✔ 已上传" if screening else "❌ 未上传")
 c3.metric("Word模板", "✔ 已上传" if template else "❌ 未上传")
 
 # =========================
-# 执行按钮区（重点突出）
+# 执行按钮区
 # =========================
 st.markdown("---")
 
 st.markdown("<div class='big-button'>", unsafe_allow_html=True)
 
 if st.button("🚀 开始生成PRER报告"):
+
     if not product_info or not screening or not template:
         st.error("❌ 请先上传：产品信息表 + 文献筛选表 + Word模板")
     else:
-        with st.spinner("🧠 AI正在生成结构化报告，请稍候..."):
+        with st.spinner("🧠 正在生成结构化报告，请稍候..."):
 
             file_map = {
                 "product_info": product_info,
@@ -160,7 +160,4 @@ st.markdown("</div>", unsafe_allow_html=True)
 # 底部信息
 # =========================
 st.divider()
-st.caption("© CER中心 | PRER自动化报告系统 | Seven")```
-
----
-st.metric()
+st.caption("© CER中心 | PRER自动化报告系统 | Seven")
