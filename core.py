@@ -416,35 +416,16 @@ def fill_specific_table(table, records):
 # =========================
 # 主程序
 # =========================
+from io import BytesIO
+
 def generate_report(file_map, template_file):
-    base_dir = os.path.dirname(os.path.abspath(__file__))
-
-    template_path = os.path.join(base_dir, "template-4个数据库.docx")
-    output_path = os.path.join(base_dir, "最终生成报告.docx")
-
-    # =========================
-    # ⭐ 文件级数据输入
-    # =========================
-    file_map = {
-        "product_info": os.path.join(base_dir, "产品信息表.xlsx"),
-        "screening": os.path.join(base_dir, "文献筛选表.xlsx"),
-        "analysis": os.path.join(base_dir, "文献数据分析表.xlsx"),
-        "efficacy": os.path.join(base_dir, "有效性结果表.xlsx"),
-        "safety": os.path.join(base_dir, "安全性结果表.xlsx"),
-    }
 
     print("读取数据...")
 
     data = load_all_tables(file_map)
-
-    # =========================
-    # ⭐ 占位符（产品信息表）
-    # =========================
+    
     replacements = load_placeholders_from_product_table(data["product_info"])
 
-    # =========================
-    # ⭐ 文献结构（筛选表）
-    # =========================
     databases = load_literature_from_screening(data["screening"])
 
     wanfang = databases.get("万方", [])
@@ -452,9 +433,6 @@ def generate_report(file_map, template_file):
     pubmed = databases.get("PubMed", [])
     cochrane = databases.get("Cochrane Library", [])
 
-    # =========================
-    # ⭐ 统计逻辑
-    # =========================
     product_name = replacements.get("{产品名称}", "")
 
     total_included, summary_text = build_summary_text(databases, product_name)
@@ -465,59 +443,38 @@ def generate_report(file_map, template_file):
     replacements["{总纳入文献量}"] = str(total_included)
     replacements["{文献数据分析}"] = summary_text
 
-    # =========================
-    # ⭐ 各数据库检索量
-    # =========================
     replacements["{万方检索量}"] = len(wanfang)
     replacements["{知网检索量}"] = len(cnki)
     replacements["{PubMed检索量}"] = len(pubmed)
     replacements["{Cochrane检索量}"] = len(cochrane)
-    
-    # =========================
-# ⭐ 文献综述分析（新增）
-# =========================
+
     analysis_text = build_literature_analysis_text(
-    data.get("analysis"),
-    data.get("screening")
+        data.get("analysis"),
+        data.get("screening")
     )
 
     replacements["{文献综述分析}"] = analysis_text
 
-    print("加载Word模板...")
-
-
-    from io import BytesIO
     doc = Document(BytesIO(template_file.read()))
 
-
-    print("替换正文...")
-
     replace_all_content_keep_style(doc, replacements)
-
-    print("替换页眉...")
-
     replace_header_keep_format(doc, replacements)
-
-    print("填充表格...")
 
     tables = doc.tables
 
-    if len(tables) > 3:
-        fill_specific_table(tables[3], wanfang)
-    if len(tables) > 4:
-        fill_specific_table(tables[4], cnki)
-    if len(tables) > 5:
-        fill_specific_table(tables[5], pubmed)
-    if len(tables) > 6:
-        fill_specific_table(tables[6], cochrane)
+    db_map = {
+        3: wanfang,
+        4: cnki,
+        5: pubmed,
+        6: cochrane
+    }
 
-    doc.save(output_path)
+    for idx, records in db_map.items():
+        if len(tables) > idx:
+            fill_specific_table(tables[idx], records)
 
-    print(f"\n✅ 完成：总文献 {total_all} 篇，纳入 {total_included} 篇")
+    output = BytesIO()
+    doc.save(output)
+    output.seek(0)
 
-
-from io import BytesIO
-output = BytesIO()
-doc.save(output)
-output.seek(0)
-return output
+    return output
