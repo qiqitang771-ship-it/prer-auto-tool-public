@@ -119,8 +119,6 @@ if st.button("🚀 开始生成PRER报告"):
                 "product_info": product_info,
                 "screening": screening,
                 "analysis": analysis,
-                "efficacy": efficacy,
-                "safety": safety,
             }
 
             output = generate_report(file_map, template)
