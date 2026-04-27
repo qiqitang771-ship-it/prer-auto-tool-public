@@ -1,3 +1,4 @@
+import os
 import streamlit as st
 from core import generate_report
 from datetime import datetime
@@ -62,7 +63,7 @@ with st.sidebar:
     st.markdown("""
     1️⃣ 上传产品信息表  
     2️⃣ 上传文献筛选表  
-    3️⃣ 上传Word模板  
+    3️⃣ 选择固定Word模板  
     4️⃣ 可选上传分析数据  
     5️⃣ 点击生成报告  
     """)
@@ -81,9 +82,26 @@ with col1:
     product_info = st.file_uploader("产品信息表", type=["xlsx"], key="product_info")
     screening = st.file_uploader("文献筛选表", type=["xlsx"], key="screening")
 
+template_options = {
+    "模板1 - 标准模板": "template-2个数据库.docx",
+    "模板2 - 简洁模板": "template-4个数据库.docx",
+}
+
 with col2:
     st.markdown("#### 📄 报告模板（必填）")
-    template = st.file_uploader("Word模板", type=["docx"], key="template")
+    template_choice = st.selectbox(
+        "请选择模板",
+        options=list(template_options.keys()),
+        help="请选择固定模板1或模板2",
+        key="template_select"
+    )
+    selected_template_path = template_options.get(template_choice)
+    template_exists = os.path.exists(selected_template_path)
+
+    if template_exists:
+        st.success(f"已选择：{template_choice}")
+    else:
+        st.error(f"模板文件未找到：{selected_template_path}")
 
 with col3:
     st.markdown("#### 📊 文献分析数据（可选）")
@@ -98,7 +116,7 @@ c1, c2, c3 = st.columns(3)
 
 c1.metric("产品信息表", "✔ 已上传" if product_info else "❌ 未上传")
 c2.metric("文献筛选表", "✔ 已上传" if screening else "❌ 未上传")
-c3.metric("Word模板", "✔ 已上传" if template else "❌ 未上传")
+c3.metric("Word模板", "✔ 已选择" if template_exists else "❌ 未找到")
 
 # =========================
 # 执行区
@@ -109,19 +127,19 @@ st.markdown("<div class='big-button'>", unsafe_allow_html=True)
 
 if st.button("🚀 开始生成PRER报告"):
 
-    if not product_info or not screening or not template:
-        st.error("❌ 请先上传：产品信息表 + 文献筛选表 + Word模板")
+    if not product_info or not screening or not template_exists:
+        st.error("❌ 请先准备：产品信息表 + 文献筛选表，并确保选择模板")
 
     else:
         with st.spinner("🧠 正在生成结构化报告，请稍候..."):
-
             file_map = {
                 "product_info": product_info,
                 "screening": screening,
                 "analysis": analysis,
             }
 
-            output = generate_report(file_map, template)
+            with open(selected_template_path, "rb") as template_file:
+                output = generate_report(file_map, template_file)
 
         st.success("✅ 报告生成成功！")
 
