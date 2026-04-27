@@ -83,8 +83,8 @@ with col1:
     screening = st.file_uploader("文献筛选表", type=["xlsx"], key="screening")
 
 template_options = {
-    "模板1 - 标准模板": "template-2个数据库.docx",
-    "模板2 - 简洁模板": "template-4个数据库.docx",
+    "模板1 - 2个数据库": "template-2个数据库.docx",
+    "模板2 - 4个数据库": "template-4个数据库.docx",
 }
 
 with col2:
