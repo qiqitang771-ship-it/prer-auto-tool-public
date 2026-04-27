@@ -88,7 +88,7 @@ template_options = {
 }
 
 with col2:
-    st.markdown("#### 📄 报告模板（必填）")
+    st.markdown("#### 📄 报告模板")
     template_choice = st.selectbox(
         "请选择模板",
         options=list(template_options.keys()),
