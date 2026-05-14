@@ -195,7 +195,7 @@ def build_literature_analysis_text(analysis_df, screening_df):
     import re
 
     if analysis_df is None or analysis_df.empty:
-        return "未提供文献数据分析内容。"
+        return ""
 
     if screening_df is None or screening_df.empty:
         return "缺少文献筛选表，无法建立编号映射。"
