@@ -165,7 +165,7 @@ def build_summary_text(db_map, product_name):
 
     # 无纳入
     if total == 0:
-        return 0, "未检索到符合纳入标准的文献。"
+        return 0, "本次检索纳入分析的文献为0篇，文献筛选详见附录1（文献数据分析）。"
 
     parts = []
 
@@ -446,7 +446,7 @@ def generate_report(file_map, template_file):
     replacements["{万方检索量}"] = len(wanfang)
     replacements["{知网检索量}"] = len(cnki)
     replacements["{PubMed检索量}"] = len(pubmed)
-    replacements["{Cochrane检索量}"] = len(cochrane)
+    replacements["{Cochrane Library检索量}"] = len(cochrane)
 
     analysis_text = build_literature_analysis_text(
         data.get("analysis"),
